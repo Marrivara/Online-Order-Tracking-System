@@ -1,0 +1,16 @@
+spring:
+  datasource:
+    url: jdbc:postgresql://localhost:5432/test2
+    username: berkay
+    password: 123456
+  jpa:
+    hibernate:
+      ddl-auto: update
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.PostgreSQLDialect
+
+token:
+  app:
+    secret: 4Do0UFws3ohp8fmVkS+GvWuW3ccD8fxP42wmE9xSvHH2gaf80wSMz6qGYBjUwydcfh/pzDWZIPL81YBuTKJwfhdppa8R+N1cgemxoTjLdRPy4EqrjMHD3JrTqKVSdezjrd1fWxVC+pTI6LX4EMPGmb0mSIEs2/6LvtqegoywfIboQt2ImtupCH/C4YGjGZjjnfKCD2Pr7fkNJg8nTnjufXuOwR6DWCIkoossC3Qm/O/MncLX822oyRPpIJy0dTwzOUXhc1sTMZ4xzN+uUCEMwvb40qkQUY6vWB0srskTE5NDcKeYk/D2H2chzGKEKS8jP3PhRarepdqMuNYsSho6mDkGsMt5v0upLISlQ2TkPcQ=
+    expiration: 86400000
