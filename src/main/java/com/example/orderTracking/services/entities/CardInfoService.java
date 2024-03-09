@@ -35,7 +35,7 @@ public class CardInfoService implements CardInfoServiceInterface {
             userService.setCardInfo(user, cardInfo);
         }catch (Exception e){
             cardInfoRepository.delete(newCard);
-            throw new RuntimeException("Error while setting card info to passenger");
+            throw new RuntimeException("Error while setting card info to user");
         }
         return CardInfoToCardInfoResponse.convert(newCard);
     }

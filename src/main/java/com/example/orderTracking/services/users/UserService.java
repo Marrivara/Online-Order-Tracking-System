@@ -29,7 +29,7 @@ public class UserService implements UserServiceInterface {
 
 
     public User getUserById(Integer id) {
-        return userRepository.findById(id).orElseThrow(()->new RuntimeException("Passenger not found"));
+        return userRepository.findById(id).orElseThrow(()->new RuntimeException("User not found"));
     }
 
     public UserResponse getUserResponseById(Integer id) {

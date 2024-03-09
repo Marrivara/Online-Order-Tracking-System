@@ -42,4 +42,9 @@ public class ProductService {
         product.setQuantity(quantity);
         return ProductToProductResponse.convert(productRepository.save(product));
     }
+
+    public void reduceQuantity(Product product, Integer quantity) {
+        product.setQuantity(product.getQuantity() - quantity);
+        productRepository.save(product);
+    }
 }

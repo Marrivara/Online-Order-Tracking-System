@@ -13,5 +13,4 @@ public class OrderRequest {
     private Integer userId;
     private Integer productId;
     private Integer quantity;
-    private String email;
 }

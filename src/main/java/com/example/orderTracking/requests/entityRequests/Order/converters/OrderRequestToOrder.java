@@ -15,7 +15,7 @@ public class OrderRequestToOrder {
                 .product(product)
                 .quantity(orderRequest.getQuantity())
                 .totalPrice(product.getPrice() * orderRequest.getQuantity())
-                .status(OrderStatus.APPROVED)
+                .status(OrderStatus.NEW)
                 .build();
     }
 }
