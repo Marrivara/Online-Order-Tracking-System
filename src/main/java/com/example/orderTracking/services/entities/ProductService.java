@@ -58,7 +58,6 @@ public class ProductService {
     }
 
     public List<ProductResponse> getAllProductsWithFilters(ProductSpecRequest productSpecRequest) {
-
         return ProductToProductResponse.convertMultiple(productRepository.findAll(filterProduct(productSpecRequest)));
     }
 
