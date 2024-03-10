@@ -7,6 +7,8 @@ import com.example.orderTracking.services.entities.OrderService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @RestController
 @RequestMapping("/api/order")
 public class OrderController {
@@ -16,6 +18,7 @@ public class OrderController {
     public OrderController(OrderService orderService) {
         this.orderService = orderService;
     }
+
 
     @PostMapping("/create")
     public ResponseEntity<OrderResponse> createOrder(@RequestBody OrderRequest orderRequest) {
@@ -28,6 +31,15 @@ public class OrderController {
         return ResponseEntity.ok(orderService.changeOrderStatus(changeOrderRequest, token));
     }
 
+    @GetMapping("/{id}")
+    public ResponseEntity<OrderResponse> getOrderById(@PathVariable Integer id, @RequestHeader("Authorization") String token){
+        return ResponseEntity.ok(orderService.getOrderResponseById(id, token));
+    }
+
+    @GetMapping("/all")
+    public ResponseEntity<List<OrderResponse>> getAllOrders(@RequestHeader("Authorization") String token){
+        return ResponseEntity.ok(orderService.getAllOrders(token));
+    }
 
 
 }

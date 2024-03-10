@@ -20,6 +20,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 @Service
 public class OrderService {
 
@@ -95,10 +97,10 @@ public class OrderService {
         if(order.getStatus().equals(OrderStatus.CANCELLED)){
             return false;
             //Manager can change the status of any order
-        }else if (role.equals(Role.Manager)) {
+        }else if (role.equals(Role.ROLE_MANAGER)) {
             return true;
             //Customer can only change the status of his/her own orders
-        } else if (role.equals(Role.Customer) && order.getUser().getId().equals(user.getId())) {
+        } else if (role.equals(Role.ROLE_CUSTOMER) && order.getUser().getId().equals(user.getId())) {
             //Customer can only cancel the order
             return changeOrderRequest.getStatus().equals(OrderStatus.CANCELLED);
         } else {
@@ -110,14 +112,33 @@ public class OrderService {
         return orderRepository.findById(orderId).orElseThrow(() -> new RuntimeException("Order not found"));
     }
 
-    public OrderResponse getOrderResponseById(Integer orderId) {
+    public OrderResponse getOrderResponseById(Integer orderId, String token) {
+        String email = jwtService.extractUserEmail(token.substring(7));
+        User user = userService.getUserByEmail(email);
         Order order = getOrderById(orderId);
+        if (user.getRole().equals(Role.ROLE_CUSTOMER) && !order.getUser().getId().equals(user.getId())) {
+            throw new RuntimeException("You can only get your own orders");
+        }
         return OrderResponseConverterCaller(order, order.getUser(), order.getProduct());
     }
+    public List<OrderResponse> getAllOrders(String token) {
+        String email = jwtService.extractUserEmail(token.substring(7));
+        User user = userService.getUserByEmail(email);
+        if(user.getRole().equals(Role.ROLE_CUSTOMER)) {
+            return OrderToOrderResponse.convertMultiple(getAllOrdersByUser(user));
+        } else if (user.getRole().equals(Role.ROLE_MANAGER)) {
+            return OrderToOrderResponse.convertMultiple(orderRepository.findAll());
+        }
+        return null;
+    }
+
+    private List<Order> getAllOrdersByUser(User user) {
+        return orderRepository.findAllByUser(user);
+    }
+
     private OrderResponse OrderResponseConverterCaller(Order order, User user, Product product) {
         return OrderToOrderResponse.convert(order,
                 UserToOrderUserResponse.convert(user),
                 ProductToOrderProductResponse.convert(product));
     }
-
 }

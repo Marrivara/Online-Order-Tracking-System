@@ -7,5 +7,5 @@ import java.util.List;
 public interface CardInfoServiceInterface {
     List<CardInfoResponse> getAllCardInfos();
 
-    CardInfoResponse deleteCardInfo(Integer id);
+    CardInfoResponse deleteCardInfo(Integer id, String token);
 }

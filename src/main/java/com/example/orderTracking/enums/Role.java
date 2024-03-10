@@ -1,5 +1,5 @@
 package com.example.orderTracking.enums;
 
 public enum Role {
-    Manager, Customer
+    ROLE_MANAGER, ROLE_CUSTOMER
 }

@@ -3,6 +3,7 @@ package com.example.orderTracking.services.users;
 import com.example.orderTracking.model.entities.CardInfo;
 import com.example.orderTracking.model.users.User;
 import com.example.orderTracking.repositories.UserRepository;
+import com.example.orderTracking.requests.authRequests.RegisterRequest;
 import com.example.orderTracking.responses.entityResponses.User.UserResponse;
 import com.example.orderTracking.responses.entityResponses.User.converters.UserToUserResponse;
 import com.example.orderTracking.responses.nestedResponses.cardInfo.UserCardInfoResponse;
@@ -55,6 +56,21 @@ public class UserService implements UserServiceInterface {
     @Override
     public User getUserByEmail(String userEmail) {
         return userRepository.findByEmail(userEmail).orElseThrow(()->new RuntimeException("User not found by email."));
+    }
+
+    @Override
+    public UserResponse updateUser(Integer id, RegisterRequest userRequest) {
+        User user = getUserById(id);
+        user.setFirstName(userRequest.getFirstName());
+        user.setLastName(userRequest.getLastName());
+        user.setGender(userRequest.getGender());
+        user.setEmail(userRequest.getEmail());
+        user.setAge(userRequest.getAge());
+        user.setAddress(userRequest.getAddress());
+        user.setPhoneNumber(userRequest.getPhoneNumber());
+        user.setRole(userRequest.getRole());
+        userRepository.save(user);
+        return getUserResponseById(id);
     }
 
     private UserResponse UserResponseConverterCaller(User user, CardInfo cardInfo, List<UserOrderResponse> orders) {

@@ -6,13 +6,16 @@ import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 
 import java.security.Key;
+import java.util.Collection;
 import java.util.Date;
 import java.util.Map;
 import java.util.function.Function;
+import java.util.stream.Collectors;
 
 @Service
 public class JwtService {
@@ -30,10 +33,26 @@ public class JwtService {
             Map<String, Object> extraClaims,
             UserDetails userDetails
     ){
+        Claims claims = Jwts.claims().setSubject(userDetails.getUsername());
+
+        // Add custom claims
+        if (extraClaims != null) {
+            claims.putAll(extraClaims);
+        }
+
+
+        Collection<? extends GrantedAuthority> authorities = userDetails.getAuthorities();
+        if (authorities != null && !authorities.isEmpty()) {
+            claims.put("roles", authorities.stream()
+                    .map(GrantedAuthority::getAuthority)
+                    .collect(Collectors.toList()));
+        }
+
         return Jwts
                 .builder()
-                .setClaims(extraClaims)
-                .setSubject(userDetails.getUsername())
+                .setClaims(claims)
+                //.setSubject(userDetails.getUsername())
+
                 .setIssuedAt(new Date(System.currentTimeMillis()))
                 .setExpiration(new Date(System.currentTimeMillis() + EXPIRATION))
                 .signWith(getSigningKey(), SignatureAlgorithm.HS256)

@@ -14,6 +14,7 @@ public class ProductToOrderProductResponse {
                 .price(product.getPrice())
                 .description(product.getDescription())
                 .quantity(product.getQuantity())
+                .category(product.getCategory())
                 .deletedAt(product.getDeletedAt())
                 .createdAt(product.getCreatedAt())
                 .build();
