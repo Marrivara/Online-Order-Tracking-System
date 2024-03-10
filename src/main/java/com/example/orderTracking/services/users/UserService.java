@@ -35,9 +35,7 @@ public class UserService implements UserServiceInterface {
     public UserResponse getUserResponseById(Integer id) {
         User user = getUserById(id);
         UserCardInfoResponse cardInfo = CardInfoToUserCardInfoResponse.convert(user.getCardInfo());
-        return UserToUserResponse.convert(user,
-                cardInfo,
-                getUserOrderResponsesFromUser(user));
+        return UserResponseConverterCaller(user, user.getCardInfo(), getUserOrderResponsesFromUser(user));
     }
 
     private List<UserOrderResponse> getUserOrderResponsesFromUser(User user) {
@@ -52,5 +50,14 @@ public class UserService implements UserServiceInterface {
     @Override
     public List<UserResponse> getAllUsers() {
         return UserToUserResponse.convertMultiple(userRepository.findAll());
+    }
+
+    @Override
+    public User getUserByEmail(String userEmail) {
+        return userRepository.findByEmail(userEmail).orElseThrow(()->new RuntimeException("User not found by email."));
+    }
+
+    private UserResponse UserResponseConverterCaller(User user, CardInfo cardInfo, List<UserOrderResponse> orders) {
+        return UserToUserResponse.convert(user, CardInfoToUserCardInfoResponse.convert(cardInfo), orders);
     }
 }
