@@ -1,6 +1,6 @@
 package com.example.orderTracking.services.entities;
 
-import com.example.orderTracking.enums.ProductCategory;
+import com.example.orderTracking.exceptions.runtimeExceptions.notFoundException.ProductNotFoundException;
 import com.example.orderTracking.model.entities.Product;
 import com.example.orderTracking.repositories.ProductRepository;
 import com.example.orderTracking.requests.entityRequests.Product.ProductRequest;
@@ -13,7 +13,6 @@ import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.function.Predicate;
 
 @Service
 public class ProductService {
@@ -25,7 +24,7 @@ public class ProductService {
     }
 
     public Product getProductById(Integer id) {
-        return productRepository.findById(id).orElseThrow(() -> new RuntimeException("Product not found"));
+        return productRepository.findById(id).orElseThrow(() -> new ProductNotFoundException("Product not found"));
     }
 
     public ProductResponse getProductResponseById(Integer id) {

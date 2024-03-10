@@ -2,6 +2,10 @@ package com.example.orderTracking.services.entities;
 
 import com.example.orderTracking.enums.OrderStatus;
 import com.example.orderTracking.enums.Role;
+import com.example.orderTracking.exceptions.runtimeExceptions.NotSuitableException.ProductQuantityIsNotEnoughException;
+import com.example.orderTracking.exceptions.runtimeExceptions.NotSuitableException.UserDoesNotHaveACardInfoException;
+import com.example.orderTracking.exceptions.runtimeExceptions.authorizationExceptions.NotAuthorizedToException;
+import com.example.orderTracking.exceptions.runtimeExceptions.notFoundException.OrderNotFoundException;
 import com.example.orderTracking.model.entities.Order;
 import com.example.orderTracking.model.entities.Product;
 import com.example.orderTracking.model.users.User;
@@ -11,7 +15,6 @@ import com.example.orderTracking.requests.entityRequests.Order.OrderRequest;
 import com.example.orderTracking.requests.entityRequests.Order.converters.OrderRequestToOrder;
 import com.example.orderTracking.responses.entityResponses.Order.OrderResponse;
 import com.example.orderTracking.responses.entityResponses.Order.converters.OrderToOrderResponse;
-import com.example.orderTracking.responses.entityResponses.Product.converters.ProductToProductResponse;
 import com.example.orderTracking.responses.nestedResponses.product.converters.ProductToOrderProductResponse;
 import com.example.orderTracking.responses.nestedResponses.user.converters.UserToOrderUserResponse;
 import com.example.orderTracking.services.jwt.JwtService;
@@ -52,11 +55,11 @@ public class OrderService {
         Order order = OrderRequestToOrder.convert(orderRequest, user, product);
 
         if (!checkIfProductIsAvailable(product, order.getQuantity())) {
-            throw new RuntimeException("Product is not available");
+            throw new ProductQuantityIsNotEnoughException("Product is not available");
         }
 
         if (!checkIfUserHasACardInfo(user)) {
-            throw new RuntimeException("User does not have a card info");
+            throw new UserDoesNotHaveACardInfoException("User does not have a card info");
         }
         orderRepository.save(order);
         productService.reduceQuantity(product, order.getQuantity());
@@ -88,7 +91,7 @@ public class OrderService {
             orderRepository.save(order);
             return OrderResponseConverterCaller(order, order.getUser(), order.getProduct());
         } else {
-            throw new RuntimeException("Status change is not allowed");
+            throw new NotAuthorizedToException("Status change is not allowed");
         }
     }
 
@@ -109,7 +112,7 @@ public class OrderService {
     }
 
     public Order getOrderById(Integer orderId) {
-        return orderRepository.findById(orderId).orElseThrow(() -> new RuntimeException("Order not found"));
+        return orderRepository.findById(orderId).orElseThrow(() -> new OrderNotFoundException("Order not found"));
     }
 
     public OrderResponse getOrderResponseById(Integer orderId, String token) {
@@ -117,7 +120,7 @@ public class OrderService {
         User user = userService.getUserByEmail(email);
         Order order = getOrderById(orderId);
         if (user.getRole().equals(Role.ROLE_CUSTOMER) && !order.getUser().getId().equals(user.getId())) {
-            throw new RuntimeException("You can only get your own orders");
+            throw new NotAuthorizedToException("You can only get your own orders");
         }
         return OrderResponseConverterCaller(order, order.getUser(), order.getProduct());
     }

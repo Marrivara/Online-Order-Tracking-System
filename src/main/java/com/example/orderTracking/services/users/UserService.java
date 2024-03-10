@@ -1,5 +1,6 @@
 package com.example.orderTracking.services.users;
 
+import com.example.orderTracking.exceptions.runtimeExceptions.notFoundException.UserNotFoundException;
 import com.example.orderTracking.model.entities.CardInfo;
 import com.example.orderTracking.model.users.User;
 import com.example.orderTracking.repositories.UserRepository;
@@ -11,11 +12,9 @@ import com.example.orderTracking.responses.nestedResponses.cardInfo.converters.C
 import com.example.orderTracking.responses.nestedResponses.order.UserOrderResponse;
 import com.example.orderTracking.responses.nestedResponses.order.converters.OrderToUserOrderResponse;
 import com.example.orderTracking.services.Interfaces.UserServiceInterface;
-import com.example.orderTracking.services.entities.CardInfoService;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.Optional;
 
 @Service
 public class UserService implements UserServiceInterface {
@@ -30,7 +29,7 @@ public class UserService implements UserServiceInterface {
 
 
     public User getUserById(Integer id) {
-        return userRepository.findById(id).orElseThrow(()->new RuntimeException("User not found"));
+        return userRepository.findById(id).orElseThrow(()->new UserNotFoundException("User not found"));
     }
 
     public UserResponse getUserResponseById(Integer id) {
@@ -55,7 +54,7 @@ public class UserService implements UserServiceInterface {
 
     @Override
     public User getUserByEmail(String userEmail) {
-        return userRepository.findByEmail(userEmail).orElseThrow(()->new RuntimeException("User not found by email."));
+        return userRepository.findByEmail(userEmail).orElseThrow(()->new UserNotFoundException("User not found by email."));
     }
 
     @Override

@@ -1,6 +1,9 @@
 package com.example.orderTracking.services.entities;
 
 import com.example.orderTracking.enums.Role;
+import com.example.orderTracking.exceptions.runtimeExceptions.authorizationExceptions.UnauthorizedException;
+import com.example.orderTracking.exceptions.runtimeExceptions.internalServerErrors.SetCardInfoToUserException;
+import com.example.orderTracking.exceptions.runtimeExceptions.notFoundException.CardInfoNotFoundException;
 import com.example.orderTracking.model.entities.CardInfo;
 import com.example.orderTracking.model.users.User;
 import com.example.orderTracking.repositories.CardInfoRepository;
@@ -39,13 +42,13 @@ public class CardInfoService implements CardInfoServiceInterface {
             userService.setCardInfo(user, cardInfo);
         } catch (Exception e) {
             cardInfoRepository.delete(newCard);
-            throw new RuntimeException("Error while setting card info to user");
+            throw new SetCardInfoToUserException("Error while setting card info to user. Card info is deleted.");
         }
         return CardInfoToCardInfoResponse.convert(newCard);
     }
 
     public CardInfo getCardInfoById(Integer id) {
-        return cardInfoRepository.findById(id).orElseThrow(() -> new RuntimeException("Card info not found"));
+        return cardInfoRepository.findById(id).orElseThrow(() -> new CardInfoNotFoundException("Card info not found"));
     }
 
     public CardInfoResponse getCardInfoResponseById(Integer id, String token) {
@@ -53,7 +56,7 @@ public class CardInfoService implements CardInfoServiceInterface {
         User user = userService.getUserByEmail(userEmail);
         if (user.getRole() != Role.ROLE_MANAGER) {
             if (!user.getCardInfo().getId().equals(id)) {
-                throw new RuntimeException("You can only get your own card info");
+                throw new UnauthorizedException("You can only get your own card info");
             }
         }
         return CardInfoToCardInfoResponse.convert(getCardInfoById(id));
@@ -70,7 +73,7 @@ public class CardInfoService implements CardInfoServiceInterface {
         User user = userService.getUserByEmail(userEmail);//User that is trying to delete the card info
         if (user.getRole() != Role.ROLE_MANAGER) {
             if (user.getCardInfo().getId().equals(id)) {
-                throw new RuntimeException("You can only delete your own card info");
+                throw new UnauthorizedException("You can only delete your own card info");
             }
         }
         CardInfo cardInfo = getCardInfoById(id);
