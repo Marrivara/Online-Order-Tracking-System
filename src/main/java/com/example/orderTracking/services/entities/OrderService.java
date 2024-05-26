@@ -46,12 +46,10 @@ public class OrderService {
     public OrderResponse createOrder(OrderRequest orderRequest) {
         User user;
         Product product;
-        try {
+
             user = userService.getUserById(orderRequest.getUserId());
             product = productService.getProductById(orderRequest.getProductId());
-        } catch (Exception e) {
-            throw new RuntimeException("Error while creating order: " + e.getMessage());
-        }
+
         Order order = OrderRequestToOrder.convert(orderRequest, user, product);
 
         if (!checkIfProductIsAvailable(product, order.getQuantity())) {

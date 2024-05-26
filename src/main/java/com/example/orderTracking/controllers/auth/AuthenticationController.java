@@ -7,10 +7,7 @@ import com.example.orderTracking.responses.authResponses.AuthenticationResponse;
 import com.example.orderTracking.services.auth.AuthenticationService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/api/auth")
@@ -35,5 +32,10 @@ public class AuthenticationController {
         return ResponseEntity
                 .ok(authenticationService
                         .login(registerRequest));
+    }
+
+    @GetMapping("/test")
+    public ResponseEntity<String> test() {
+        return ResponseEntity.ok("Test");
     }
 }

@@ -24,4 +24,5 @@ public class OrderResponse {
 
     private Date createdAt;
     private Date deletedAt;
+
 }

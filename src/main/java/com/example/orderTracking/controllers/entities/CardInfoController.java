@@ -29,7 +29,7 @@ public class CardInfoController {
         return ResponseEntity.ok(cardInfoService.getCardInfoResponseById(id, token));
     }
 
-    @PreAuthorize("hasRole('ROLE_MANAGER')")
+    //@PreAuthorize("hasRole('ROLE_MANAGER')")
     @GetMapping("/all")
     public ResponseEntity<List<CardInfoResponse>> getAllCardInfos(){
         return ResponseEntity.ok(cardInfoService.getAllCardInfos());
